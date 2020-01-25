@@ -57,5 +57,25 @@ app.post('/blog-api/nuevo-comentario', jsonParser, (req,res) => {
     }
 });
 
+app.delete('/blog-api/remover-comentario/:id', (req,res)=>{
+    let id = req.params.id;
+    let index;
+    let result = comentarios.find((elemento)=>{
+        if(elemento.id == id){
+            index = comentarios.indexOf(elemento);
+            return elemento;
+        }
+    });
+    if(result){
+        comentarios.splice(index,1);
+        res.statusMessage("Comentario eliminado");
+        return res.status(200).send();
+    }
+    else{
+        res.statusMessage("No se ha encontrado el comentario");
+        return res.status(404).send();
+    }
+    
+});
 
 
