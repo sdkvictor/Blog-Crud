@@ -68,11 +68,11 @@ app.delete('/blog-api/remover-comentario/:id', (req,res)=>{
     });
     if(result){
         comentarios.splice(index,1);
-        res.statusMessage("Comentario eliminado");
+        res.statusMessage = "Comentario eliminado";
         return res.status(200).send();
     }
     else{
-        res.statusMessage("No se ha encontrado el comentario");
+        res.statusMessage = "No se ha encontrado el comentario";
         return res.status(404).send();
     }
     
