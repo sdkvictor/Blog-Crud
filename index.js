@@ -1,8 +1,12 @@
 let express = require('express');
 let bodyParser = require('body-parser');
+let morgan = require('morgan')
 let jsonParser = bodyParser.json();
 let app = express();
-let uuid = require('uuid/v4')
+let uuid = require('uuid/v4');
+
+
+app.use(morgan('dev'));
 
 app.use(express.static('public'));
 
