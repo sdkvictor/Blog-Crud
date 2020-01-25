@@ -68,14 +68,51 @@ app.delete('/blog-api/remover-comentario/:id', (req,res)=>{
     });
     if(result){
         comentarios.splice(index,1);
-        res.statusMessage = "Comentario eliminado";
+        res.statusMessage ="Comentario eliminado";
         return res.status(200).send();
     }
     else{
+        res.statusMessage ="No se ha encontrado el comentario";
+        return res.status(404).send();
+    }  
+});
+
+app.put('/blog-api/actualizar-comentario/:id', jsonParser, (req,res)=>{
+    let id = req.body.id;
+    if(id==undefined){
+        res.statusMessage = "ID no proporcionado en el cuerpo";
+        return res.status(406).send();
+    }  
+    if(req.params.id != id){
+        res.statusMessage = "IDs no coinciden";
+        return res.status(409).send();
+    }
+    if(req.body.titulo == undefined && req.body.contenido == undefined && req.body.autor == undefined){
+        res.statusMessage = "No se han definido datos a actualizar";
+        return res.status(406).send();
+    }
+    let foundId = false;
+    comentarios.forEach((elemento)=>{
+        if(elemento.id.toString() == id){
+            foundId = true;
+            if(req.body.autor != undefined){
+                elemento.autor = req.body.autor;
+            }
+            if(req.body.titulo != undefined){
+                elemento.titulo = req.body.titulo;
+            }
+            if(req.body.contenido != undefined){
+                elemento.contenido = req.body.contenido;
+            }
+        }
+    });
+    if(!foundId){
         res.statusMessage = "No se ha encontrado el comentario";
         return res.status(404).send();
     }
-    
+    else{
+        res.statusMessage = "Se ha actualizado el comentario";
+        return res.status(202).send();
+    }
 });
-
 
