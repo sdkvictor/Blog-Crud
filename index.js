@@ -1,18 +1,26 @@
 let express = require('express');
 let bodyParser = require('body-parser');
-let morgan = require('morgan')
+let morgan = require('morgan');
 let jsonParser = bodyParser.json();
 let app = express();
 let uuid = require('uuid/v4');
 
 
-app.use(morgan('dev'));
 
 app.use(express.static('public'));
 
+app.use(morgan('dev'));
+
+app.use(function(req,res,next){
+    res.header("Access-Control-Allow-Origin, *");
+    res.header('Access-Control-Allow-Origin: *');
+    res.header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+});
+
 app.listen(8080, function(){
     console.log("App is running");
-})
+});
 
 let comentarios = [{
     id: uuid(),

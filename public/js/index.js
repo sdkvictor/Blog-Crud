@@ -4,9 +4,11 @@ function fetchShowComments(){
     $.ajax({
         url: url,
         method: "GET",
-        contentType: "application/json",
         dataType: "json",
         success:function(responseJSON){
+            console.log("meco");
+
+            console.log(responseJSON);
             showComments(responseJSON);
         },
         error: function(error){
@@ -16,7 +18,6 @@ function fetchShowComments(){
 }
 
 function showComments(responseJSON){
-    console.log(responseJSON);
     responseJSON.forEach (elemento => {
         $('#listaComentarios').append(
             `
