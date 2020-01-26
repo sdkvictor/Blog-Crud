@@ -5,17 +5,18 @@ let jsonParser = bodyParser.json();
 let app = express();
 let uuid = require('uuid/v4');
 
-
-
 app.use(express.static('public'));
 
 app.use(morgan('dev'));
 
-app.use(function(req,res,next){
-    res.header("Access-Control-Allow-Origin, *");
-    res.header('Access-Control-Allow-Origin: *');
-    res.header('Access-Control-Allow-Methods: GET, POST, PATCH, PUT, DELETE, OPTIONS');
-    res.header('Access-Control-Allow-Headers: Origin, Content-Type, X-Auth-Token');
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Content-Type,Authorization");
+    res.header("Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE");
+    if (req.method === "OPTIONS") {
+    return res.send(204);
+    }
+    next();
 });
 
 app.listen(8080, function(){
@@ -27,6 +28,13 @@ let comentarios = [{
     titulo: "Hola",
     contenido: "me llamo Carlitos",
     autor: "Carlos",
+    fecha: new Date()
+},
+{
+    id: uuid(),
+    titulo: "Adios",
+    contenido: "se la lavan",
+    autor: "Moises",
     fecha: new Date()
 }];
 
@@ -63,9 +71,15 @@ app.post('/blog-api/nuevo-comentario', jsonParser, (req,res) => {
         return res.status(406).send();
     }
     else{
-        comentarios.push({autor:req.body.autor, titulo:req.body.titulo, contenido: req.body.contenido, date: new Date(), id: uuid()});
-        res.statusMessage = "Comentario agregado exitosamente";
-        return res.status(201).send();
+        let comentario = {
+            autor : req.body.autor,
+            titulo: req.body.titulo,
+            contenido: req.body.contenido,
+            date: new Date(),
+            id: uuid()
+        }
+        comentarios.push(comentario);
+        return res.status(201).json(comentario);
     }
 });
 

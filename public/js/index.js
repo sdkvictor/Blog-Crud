@@ -1,3 +1,5 @@
+
+
 function fetchShowComments(){
     let url = "/blog-api/comentarios";
 
@@ -6,8 +8,6 @@ function fetchShowComments(){
         method: "GET",
         dataType: "json",
         success:function(responseJSON){
-            console.log("meco");
-
             console.log(responseJSON);
             showComments(responseJSON);
         },
@@ -18,28 +18,71 @@ function fetchShowComments(){
 }
 
 function showComments(responseJSON){
+    $('#listaComentarios').empty();
     responseJSON.forEach (elemento => {
         $('#listaComentarios').append(
             `
             <li>
             <h2>${elemento.titulo}</h2>
-            <h3>${elemento.autor}</h3>
+            <h3> by ${elemento.autor}</h3>
             <p>${elemento.contenido}</p>
+            <p> <button type="button" id="editButton">Edit</button> <button type="button" id="deleteButton">Delete</button> </p>
             </li>
             `
         );
     });
 }
 
-function fetchNewComment(){
-    let url = "/blog-api/comentarios";
+function addComment(comentario){
+    let url = "/blog-api/nuevo-comentario";
 
     $.ajax({
         url: url,
-        method: "GET",
+        method: "POST",
+        data: JSON.stringify(comentario),
+        contentType: 'application/json; charset=utf-8',
+        dataType: "json",
+        success:function(responseJSON){
+            console.log("mandado");
+            fetchShowComments();
+        },
+        error: function(error){
+            if (error.status == 406) {
+                alert("Error: no se han proporcionado todos los datos para crear el comentario")
+            } else {
+                alert("Error al crear nuevo comentario");
+            }
+            console.log(error);
+        }
+    });
+}
+
+function editComment(comentario,commentId){
+    let url = "/blog-api//blog-api/actualizar-comentario/" + commentId;
+
+    $.ajax({
+        url: url,
+        method: "PUT",
         data: JSON.stringify({
-            var : url
+            comentario
         }),
+        contentType: "application/json",
+        dataType: "json",
+        success:function(responseJSON){
+            fetchShowComments();
+        },
+        error: function(error){
+            console.log(error);
+        }
+    });
+}
+
+function deleteComment(commentId){
+    let url = "/blog-api/remover-comentario/" + commentId;
+
+    $.ajax({
+        url: url,
+        method: "DELETE",
         contentType: "application/json",
         dataType: "json",
         success:function(responseJSON){
@@ -51,19 +94,19 @@ function fetchNewComment(){
     });
 }
 
-function fetchEditComment(){
-    let url = "/blog-api/comentarios";
+function fetchShowByAutor(comentario){
+    let url = "/blog-api/comentarios-por-autor";
 
     $.ajax({
         url: url,
         method: "GET",
         data: JSON.stringify({
-            var : url
+            comentario
         }),
         contentType: "application/json",
         dataType: "json",
         success:function(responseJSON){
-            showComments(responseJSON);
+            fetchShowComments(responseJSON);
         },
         error: function(error){
             console.log(error);
@@ -71,49 +114,40 @@ function fetchEditComment(){
     });
 }
 
-function fetchDeleteComment(){
-    let url = "/blog-api/comentarios";
+function watchForm(){
+    let form = document.getElementById("commentsForm");
 
-    $.ajax({
-        url: url,
-        method: "GET",
-        data: JSON.stringify({
-            var : url
-        }),
-        contentType: "application/json",
-        dataType: "json",
-        success:function(responseJSON){
-            showComments(responseJSON);
-        },
-        error: function(error){
-            console.log(error);
+    form.addEventListener("submit", (event)=>{
+        console.log("submit");
+        event.preventDefault();
+        let author = document.getElementById("autorBox").value;
+        let title = document.getElementById("tituloBox").value;
+        let content = document.getElementById("contenidoBox").value;
+        let comentario = {
+            autor: author,
+            titulo : title,
+            contenido: content
         }
+        addComment(comentario);
+        document.getElementById("autorBox").value = "";
+        document.getElementById("tituloBox").value = "";
+        document.getElementById("contenidoBox").value = "";
     });
 }
 
-function fetchShowByAutor(){
-    let url = "/blog-api/comentarios";
+function watchEdit(){
 
-    $.ajax({
-        url: url,
-        method: "GET",
-        data: JSON.stringify({
-            var : url
-        }),
-        contentType: "application/json",
-        dataType: "json",
-        success:function(responseJSON){
-            showComments(responseJSON);
-        },
-        error: function(error){
-            console.log(error);
-        }
-    });
+}
+
+function watchDelete(){
+
 }
 
 init();
 
 function init(){
     fetchShowComments();
-    console.log("running js");
+    watchForm();
+    watchEdit();
+    watchDelete();
 }
