@@ -130,15 +130,20 @@ app.put('/blog-api/actualizar-comentario/:id', jsonParser, (req,res)=>{
             if(req.body.contenido != undefined){
                 elemento.contenido = req.body.contenido;
             }
+            let comentario = elemento;
+            console.log("se actualizo");
+            res.statusMessage = "Se ha actualizado el comentario";
+            return res.status(202).json(comentario);
         }
     });
     if(!foundId){
         res.statusMessage = "No se ha encontrado el comentario";
         return res.status(404).send();
+
     }
     else{
         res.statusMessage = "Se ha actualizado el comentario";
-        return res.status(202).send();
+        return res.status(202).json(comentario);
     }
 });
 

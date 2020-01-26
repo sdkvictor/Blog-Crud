@@ -26,7 +26,7 @@ function showComments(responseJSON){
             <h2>${elemento.titulo}</h2>
             <h3> by ${elemento.autor}</h3>
             <p>${elemento.contenido}</p>
-            <p> <button type="button" id="editButton">Edit</button> <button type="button" id="deleteButton">Delete</button> </p>
+            <p> <button type="button" value="${elemento.id}" class="editButton">Edit</button> <button type="button" value="${elemento.id}" class="deleteButton">Delete</button> </p>
             </li>
             `
         );
@@ -58,20 +58,20 @@ function addComment(comentario){
 }
 
 function editComment(comentario,commentId){
-    let url = "/blog-api//blog-api/actualizar-comentario/" + commentId;
+    let url = "/blog-api/actualizar-comentario/" + commentId;
 
     $.ajax({
         url: url,
         method: "PUT",
-        data: JSON.stringify({
-            comentario
-        }),
-        contentType: "application/json",
+        contentType: 'application/json; charset=utf-8',
+        data: JSON.stringify(comentario),
         dataType: "json",
         success:function(responseJSON){
+            console.log(responseJSON);
             fetchShowComments();
         },
         error: function(error){
+            console.log("failed put");
             console.log(error);
         }
     });
@@ -136,7 +136,75 @@ function watchForm(){
 }
 
 function watchEdit(){
+    $('#listaComentarios').on('click', '.editButton', function(event){
+        console.log($(this).parent().parent());
+        let id = $(this).val();
+        $(this).parent().append(
+            `
+            <h3> Editar comentario <h3>
 
+            <form class="editForm">
+                <div>
+                    <p>
+                    <label for="autor"></label>
+                       Autor:
+                    <input type="text" name="autor" id="editAutor"></input>
+                    </p>
+                    <p>
+                    <label for="titulo"></label>
+                      Titulo:
+                    <input type="textarea" name="titulo" id="editTitulo" rows="4" cols="50"></input>
+                    </p>
+                    <label for="contenido"></label>
+                        <p>Comentario:</p>
+                    <textarea name="contenido" id="editContenido" rows="4" cols="30"></textarea>
+                </div>
+                <p>
+                <div>
+                    <input type="submit" id="editCommentBtn" name="AddComment"></input> 
+                </div>
+                </p>
+            </form>
+            `
+
+        );
+    });
+
+    $('#listaComentarios').on('submit', '.editForm', function(event) {
+        event.preventDefault();
+        let title = $('#editTitulo').val();
+        let author = $('#editAutor').val();
+        let content = $('#editContenido').val();
+        console.log(author);
+        console.log(title);
+        console.log(content);
+
+        if (title == "" && author == "" && content == "") {
+            fetchShowComments();
+            return;
+        }
+        else{
+            let comentario = {
+                
+            };
+            if (author != "") {
+                comentario.autor = author;
+            }
+            if (title != "") {
+                comentario.titulo = title;
+            }
+            if (content != "") {
+                comentario.contenido = content;
+            }
+
+            console.log(comentario.autor);
+            console.log(comentario.titulo);
+            console.log(comentario.contenido);
+            comentario.id = $(this).parent().parent().find('.editButton').val();
+            console.log($(this).parent().parent().find('.editButton').val());
+            editComment(comentario, comentario.id.toString());
+        }
+    });
 }
 
 function watchDelete(){
