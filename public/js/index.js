@@ -86,27 +86,29 @@ function deleteComment(commentId){
         contentType: "application/json",
         dataType: "json",
         success:function(responseJSON){
-            showComments(responseJSON);
+            console.log(responseJSON);
+            fetchShowComments();
         },
         error: function(error){
+            if (error.status == 404) {
+                alert("Error 404: Id no existe");
+            }
             console.log(error);
+            fetchShowComments();
         }
     });
 }
 
-function fetchShowByAutor(comentario){
-    let url = "/blog-api/comentarios-por-autor";
-
+function showByAutor(autor){
+    let url = `/blog-api/comentarios-por-autor?autor=${autor}`;
     $.ajax({
         url: url,
         method: "GET",
-        data: JSON.stringify({
-            comentario
-        }),
+        data: JSON.stringify(autor),
         contentType: "application/json",
         dataType: "json",
         success:function(responseJSON){
-            fetchShowComments(responseJSON);
+            showComments(responseJSON);
         },
         error: function(error){
             console.log(error);
@@ -208,7 +210,22 @@ function watchEdit(){
 }
 
 function watchDelete(){
+    $('#listaComentarios').on('click', '.deleteButton', function(event){
+        console.log($(this).parent().parent());
+        let id = $(this).val();
+        deleteComment(id);
+    });
+}
 
+function watchAuthorFilter(){
+    $('#searchByAutor').on('submit', function(event) {
+        event.preventDefault();
+        let autor = $('#filtroAutor').val();
+        console.log("filtering");
+        if (autor != "") {
+            showByAutor(autor);
+        }
+    });
 }
 
 init();
@@ -218,4 +235,5 @@ function init(){
     watchForm();
     watchEdit();
     watchDelete();
+    watchAuthorFilter();
 }

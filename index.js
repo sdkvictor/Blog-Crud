@@ -47,6 +47,7 @@ app.get('/blog-api/comentarios', (req,res) => {
 
 app.get('/blog-api/comentarios-por-autor', (req,res) => {
     let autor = req.query.autor;
+    console.log(req.query.autor);
     if(autor == undefined){
         res.statusMessage = "No se ha proporcionado un autor correctamente";
         return res.status(406).send();
@@ -56,7 +57,7 @@ app.get('/blog-api/comentarios-por-autor', (req,res) => {
             return elemento;
         }
     });
-    if(result.length>0){
+    if(result.length>=0){
         return res.status(200).json(result);
     }
     else{
@@ -94,7 +95,6 @@ app.delete('/blog-api/remover-comentario/:id', (req,res)=>{
     });
     if(result){
         comentarios.splice(index,1);
-        res.statusMessage ="Comentario eliminado";
         return res.status(200).send();
     }
     else{
