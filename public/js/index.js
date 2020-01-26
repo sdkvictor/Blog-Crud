@@ -48,10 +48,8 @@ function addComment(comentario){
         },
         error: function(error){
             if (error.status == 406) {
-                alert("Error: no se han proporcionado todos los datos para crear el comentario")
-            } else {
-                alert("Error al crear nuevo comentario");
-            }
+                alert("Error 406: No se han recibido todos los parametros");
+            } 
             console.log(error);
         }
     });
@@ -72,6 +70,15 @@ function editComment(comentario,commentId){
         },
         error: function(error){
             console.log("failed put");
+            if(error.status==404){
+                alert("Error 404: No se ha encontrado el comentario");
+            }
+            else if(error.status==406){
+                alert("Error 406: No se han definido datos a actualizar");
+            }
+            else if(error.status==409){
+                alert("IDs no coinciden");
+            }
             console.log(error);
         }
     });
@@ -91,7 +98,7 @@ function deleteComment(commentId){
         },
         error: function(error){
             if (error.status == 404) {
-                alert("Error 404: Id no existe");
+                alert("Error 404: No se ha encontrado el comentario");
             }
             console.log(error);
             fetchShowComments();
@@ -111,6 +118,9 @@ function showByAutor(autor){
             showComments(responseJSON);
         },
         error: function(error){
+            if(error.status==404){
+                alert("Error 404: El autor no tiene comentarios");
+            }
             console.log(error);
         }
     });
